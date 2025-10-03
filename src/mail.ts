@@ -8,18 +8,18 @@ const transporter = nodemailer.createTransport({
   port: 465, // QQ邮箱SMTP服务端口
   secure: true, // 使用SSL
   auth: {
-    user: process.env.QQ_EMAIL, // 发送方邮箱
-    pass: process.env.QQ_AUTH_CODE // 不是QQ密码，是前面获取的授权码
+    user: process.env.FROM_EMAIL, // 发送方邮箱
+    pass: process.env.FROM_MAIL_AUTH_CODE // 不是QQ密码，是前面获取的授权码
   }
 });
 
 export async function sendEmail (params: {
   subject: string;
-  html:string;
+  html: string;
 }) {
   const mailOptions = {
-    from: `"jesse ding" <${process.env.QQ_EMAIL}>`, // 发件人地址和名称
-    to: `dingxj7788@gmail.com`, // 收件人，多个用逗号分隔
+    from: process.env.FROM_EMAIL, // 发件人地址和名称
+    to: process.env.TO_MAIL, // 收件人，多个用逗号分隔
     subject: params.subject, // 主题
     html: params.html
   };

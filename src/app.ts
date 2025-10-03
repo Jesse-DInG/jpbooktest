@@ -1,10 +1,12 @@
 import fetch from 'node-fetch';
 import { CronJob } from 'cron';
 import { sendEmail } from './mail.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 
-const START_DAY = 5;
-const END_DAY = 11;
+const startDay = parseInt(process.env.START_DAY || '5', 10);
+const endDay = parseInt(process.env.END_DAY || '11', 10);
 interface IBookInfo {
     label: string;
     date: Date;
@@ -49,11 +51,11 @@ function formateDate (ticks: number) {
 
 
 // 初始化调度器
-const scheduler = new CronJob('*/10 * * * * *', async () => {
+const scheduler = new CronJob(process.env.CRON_TIME || '', async () => {
     const bookList = await fetchData();
     const acceptList = bookList.filter(v => {
         const day = v.date.getDate();
-        if (day >= START_DAY && day <= END_DAY) {
+        if (day >= startDay && day <= endDay) {
             return true;
         }
         return false;
@@ -70,7 +72,7 @@ const scheduler = new CronJob('*/10 * * * * *', async () => {
         // 发送邮件
         await sendEmail({
             subject: `冰雪之门：${titleList.join(';')}`,
-            html: contentList.join('\n')
+            html: `${contentList.join('\n')}<a href="https://yoyaku.toreta.in/hyousetsunomon-1964/#/reserve-info">预定地址：https://yoyaku.toreta.in/hyousetsunomon-1964/#/reserve-info</a>`
         });
         console.log(`bookList`, bookList);
     }
